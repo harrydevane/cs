@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Question #3</title>
+
+    <style>
+      #board {
+        margin: 20px;
+      }
+      #message {
+        font-size: 32px;
+      }
+      .box {
+        width: 100px;
+        height: 100px;
+        margin: 12px;
+        float: left;
+        border: 1px solid gray;
+        font-size: 75px;
+        line-height: 105px;
+        text-align: center;
+      }
+      .played {
+        background-color: yellow;
+      }
+      .X {
+        color: green;
+      }
+      .O {
+        color: red;
+      }
+      .spacer {
+        display: block;
+        height: 126px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="message"></div>
+    <table id="board"></table>
+    <script>
+      var message = document.getElementById('message');
+      var board = document.getElementById('board');
+      var player = 'O';
+      var finished = false;
+
+      for (var rowIndex = 0; rowIndex < 3; rowIndex++) {
+        var row = board.insertRow();
+        for (var columnIndex = 0; columnIndex < 3; columnIndex++) {
+          var cell = row.insertCell();
+          cell.className = 'box';
+          cell.onclick = function () {
+            play(this);
+          };
+        }
+      }
+
+      function play(box) {
+        if (finished) {
+          return;
+        }
+        if (box.className.includes('played')) {
+          return;
+        }
+        box.className = 'box played ' + player;
+        box.innerHTML = player;
+        if (checkForWin(player)) {
+          message.innerHTML = 'Player ' + player + ' wins!';
+          finished = true;
+          return;
+        }
+        if (player == 'O') {
+          player = 'X';
+        } else {
+          player = 'O';
+        }
+      }
+
+      var lines = [
+        [[0, 0], [0, 1], [0, 2]],
+        [[1, 0], [1, 1], [1, 2]],
+        [[2, 0], [2, 1], [2, 2]],
+
+        [[0, 0], [1, 0], [2, 0]],
+        [[0, 1], [1, 1], [2, 1]],
+        [[0, 2], [1, 2], [2, 2]],
+
+        [[0, 0], [1, 1], [2, 2]],
+        [[2, 0], [1, 1], [0, 2]],
+      ];
+
+      function checkForWin(player) {
+        for (var line of lines) {
+          var matched = true;
+          for (var coordinate of line) {
+            var rowIndex = coordinate[0];
+            var columnIndex = coordinate[1];
+            var row = board.rows[rowIndex];
+            var cell = row.cells[columnIndex];
+            if (cell.innerHTML != player) {
+              matched = false;
+              break;
+            }
+          }
+          if (matched) {
+            return true;
+          }
+        }
+        return false;
+      }
+    </script>
+  </body>
+</html>

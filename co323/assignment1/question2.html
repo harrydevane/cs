@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Question #2</title>
+
+    <style>
+      #boxes {
+        margin-top: 20px;
+      }
+      .box {
+        width: 50px;
+        height: 50px;
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+    <form>
+      Input a number of boxes: <input type="text" id="number" placeholder="5" oninput="generateBoxes();">
+      <br>
+    </form>
+    <div id="boxes"></div>
+    <script>
+      var number = document.getElementById('number');
+      var boxes = document.getElementById('boxes');
+
+      function generateBoxes() {
+        while (boxes.firstChild) {
+          boxes.removeChild(boxes.firstChild);
+        }
+        var margin = 5;
+        var num = parseInt(number.value);
+        for (var i = 0; i < num; i++) {
+          var box = document.createElement('div');
+          box.className = 'box';
+          var r = Math.floor(Math.random() * 256);
+          var g = Math.floor(Math.random() * 256);
+          var b = Math.floor(Math.random() * 256);
+          box.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
+          box.style.marginLeft = margin + 'px';
+          boxes.appendChild(box);
+          margin *= 2;
+        }
+      }
+    </script>
+  </body>
+</html>
