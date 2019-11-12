@@ -1,0 +1,4 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /proj/co539c/microblog/hd311/index.php/$1 [L]

@@ -1,0 +1,68 @@
+@font-face {
+	font-family: "San Francisco";
+	font-weight: 400;
+	src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-regular-webfont.woff");
+}
+body {
+	background: #f2f2f2;
+	font-family: "San Francisco";
+}
+h2 {
+	font-weight: normal;
+}
+.container {
+	width: auto;
+	max-width: 600px;
+	margin: auto;
+	text-align: center;
+	border-radius: 5px;
+	background: white;
+	box-shadow: 0px 0px 4px -2px black;
+}
+.navbar {
+	background: #232323;
+	text-align: left;
+}
+.navbar a {
+	display: inline-block;
+	padding: 20px 10px;
+	color: #a7a7a7;
+	text-decoration: none;
+}
+.navbar a:hover, .navbar a.active {
+	color: white;
+}
+.navbar span {
+	color: white;
+	float: right;
+	display: inline-block;
+	padding: 20px 10px;
+}
+.content {
+	padding: 25px;
+}
+.spacer {
+	margin: 10px 0;
+}
+.username a {
+	text-decoration: underline;
+	color: #00ccfa;
+}
+button {
+	padding: 10px 25px;
+	background: #00ccfa;
+	color: white;
+	border: 1px solid white;
+	border-radius: 4px;
+	font-size: 20px;
+}
+input {
+	font-size: 20px;
+	padding: 10px 20px;
+	border: 1px solid #c5c5c5;
+}
+textarea {
+	resize: none;
+	padding: 10px 10px;
+	border: 1px solid #c5c5c5;
+}
