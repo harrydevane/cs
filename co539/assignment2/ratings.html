@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Food Business Ratings</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+    <style>
+      @font-face {
+        font-family: 'San Francisco';
+        font-weight: 400;
+        src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-regular-webfont.woff');
+      }
+      body {
+        background: #f2f2f2;
+        font-family: 'San Francisco';
+      }
+      h2 {
+        font-weight: normal;
+      }
+      table {
+        border-spacing: 0px;
+        width: 100%;
+      }
+      table thead th {
+        vertical-align: middle;
+        border-bottom: 2px solid lightgray;
+      }
+      table td, table th {
+        padding: 5px;
+        vertical-align: middle;
+        border-top: 1px solid lightgray;
+      }
+      button {
+        padding: 5px 15px;
+        width: 100px;
+        background: #00ccfa;
+        color: white;
+        border: 1px solid white;
+        border-radius: 4px;
+        font-size: 15px;
+      }
+      button.sm {
+        width: auto;
+      }
+      input {
+        font-size: 15px;
+        padding: 5px 10px;
+        border: 1px solid #c5c5c5;
+      }
+      .container {
+        width: auto;
+        max-width: 1200px;
+        margin: auto;
+        text-align: center;
+        border-radius: 5px;
+        background: white;
+        box-shadow: 0px 0px 4px -2px black;
+      }
+      .header {
+        background: #232323;
+        text-align: center;
+        padding: 20px 10px;
+        border-radius: 5px 5px 0 0;
+        text-decoration: none;
+        color: white;
+      }
+      .header h2 {
+        margin: 0;
+      }
+      .header p {
+        color: #a7a7a7;
+        margin: 5px;
+      }
+      .content {
+        padding: 25px;
+      }
+      .spacer {
+        margin: 25px 0;
+        border: 0;
+        height: 1px;
+        background: #a7a7a7;
+      }
+      .search div {
+        margin-top: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h2>Food Business Ratings</h2>
+        <p>
+          This page displays ratings data sourced from gov.uk and Google Places about businesses in Maidstone providing food.
+        </p>
+      </div>
+
+      <table id="results">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Type</th>
+            <th>Hygiene Rating</th>
+            <th>Inspection Date</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div class="content">
+        <div id="pages"></div>
+
+        <div class="spacer"></div>
+
+        <div class="search">
+          <div><label>Business Name:</label></div>
+          <div><input type="text" id="business-name"></div>
+          <div><button id="submit">Submit</button></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var autocompleteNames = [
+        'Domino\'s Pizza',
+        'Papa Johns Pizza',
+        'Pizza Express',
+        'Tops Pizza'
+      ];
+
+      $('#business-name').autocomplete({
+        source: autocompleteNames
+      });
+
+      function showResults(results) {
+        var resultsTable = $('#results');
+        var resultsTableBody = resultsTable.find('tbody');
+        $.each(results, function (i, result) {
+          var row = $('<tr>');
+          row.append($('<td>').text(result.business));
+          row.append($('<td>').text(result.address));
+          row.append($('<td>').text(result.type));
+          row.append($('<td>').text(result.rating));
+          row.append($('<td>').text(result.date));
+          var ratingButton = $('<button>');
+          ratingButton.text('Get rating');
+          ratingButton.click(function () {
+            showRatings(result.business);
+          });
+          row.append($('<td>').html(ratingButton));
+          resultsTableBody.append(row);
+        });
+      }
+
+      function showPage(page) {
+        $.get('https://www.cs.kent.ac.uk/people/staff/yh/co539_a2_data/hygiene.php?op=get&page=' + page, function (json) {
+          showResults(JSON.parse(json));
+        });
+      }
+
+      function showRatings(businessName) {
+        $.get('https://www.cs.kent.ac.uk/people/staff/yh/co539_a2_data/rating.php?businessName=' + businessName, function (data) {
+          if (data.length == 0) {
+            alert('This business has not yet been rated');
+          } else {
+            alert('Average customer rating: ' + data[0].avgRating + '\nTotal number of ratings: ' + data[0].totalRatings);
+          }
+        });
+      }
+
+      function search(businessName) {
+        $('#results').find('tr:gt(0)').remove();
+        $.get('https://www.cs.kent.ac.uk/people/staff/yh/co539_a2_data/hygiene.php?op=search&business=' + businessName, function (json) {
+          var results = JSON.parse(json);
+          showResults(results);
+          for (var result of results) {
+            if ($.inArray(result.business, autocompleteNames) === -1) {
+              autocompleteNames.push(result.business);
+            }
+          }
+        });
+      }
+
+      $('#submit').click(function () {
+        search($('#business-name').val());
+      });
+
+      showPage(1);
+
+      $.get('https://www.cs.kent.ac.uk/people/staff/yh/co539_a2_data/hygiene.php?op=pages', function (json) {
+        var pages = JSON.parse(json).pages;
+        var pagesDiv = $('#pages');
+        for (var i = 1; i <= pages; i++) {
+          var button = $('<button>');
+          button.addClass('sm');
+          button.prop('id', i);
+          button.text(i);
+          button.click(function (event) {
+            $('#results').find('tr:gt(0)').remove();
+            showPage(event.target.id);
+          });
+          pagesDiv.append(button);
+        }
+      });
+    </script>
+  </body>
+</html>
